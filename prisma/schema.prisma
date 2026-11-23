@@ -1,0 +1,102 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         String   @default("student") // student | instructor | admin
+  avatarUrl    String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  lessons          Lesson[]          @relation("CreatedBy")
+  approvedLessons  Lesson[]          @relation("ApprovedBy")
+  progress         StudentProgress[]
+  tutorSessions    TutorSession[]
+  contentReviews   ContentReview[]
+}
+
+model Lesson {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  category    String   // electrical | plumbing
+  difficulty  String   @default("beginner")
+  status      String   @default("draft") // draft | approved | archived
+  duration    Int      @default(30) // minutes
+  objectives  String   // JSON array
+  safetyNotes String   // JSON array
+  steps       String   // JSON array of LessonStep
+  createdById String
+  approvedById String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  createdBy   User     @relation("CreatedBy", fields: [createdById], references: [id])
+  approvedBy  User?    @relation("ApprovedBy", fields: [approvedById], references: [id])
+  progress    StudentProgress[]
+  sessions    TutorSession[]
+}
+
+model StudentProgress {
+  id           String   @id @default(cuid())
+  studentId    String
+  lessonId     String
+  status       String   @default("not-started")
+  score        Float    @default(0)
+  timeSpent    Int      @default(0) // seconds
+  attempts     Int      @default(0)
+  observations String   @default("[]") // JSON array
+  completedAt  DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  student User   @relation(fields: [studentId], references: [id])
+  lesson  Lesson @relation(fields: [lessonId], references: [id])
+
+  @@unique([studentId, lessonId])
+}
+
+model TutorSession {
+  id        String   @id @default(cuid())
+  studentId String
+  lessonId  String
+  messages  String   @default("[]") // JSON array
+  startedAt DateTime @default(now())
+  endedAt   DateTime?
+
+  student User   @relation(fields: [studentId], references: [id])
+  lesson  Lesson @relation(fields: [lessonId], references: [id])
+}
+
+model ContentReview {
+  id         String   @id @default(cuid())
+  type       String   // ai-response | lesson-content | safety-concern
+  content    String
+  context    String
+  status     String   @default("pending")
+  reviewerId String?
+  reviewedAt DateTime?
+  createdAt  DateTime @default(now())
+
+  reviewer User? @relation(fields: [reviewerId], references: [id])
+}
+
+model ApprovedMaterial {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  category  String
+  tags      String   @default("[]") // JSON array
+  sourceRef String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
