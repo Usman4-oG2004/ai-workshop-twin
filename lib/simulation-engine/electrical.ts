@@ -33,7 +33,7 @@ function buildGraph(components: SimulationComponent[], connections: Connection[]
 
 // ─── Check if circuit has a complete path ───
 function hasCompletePath(graph: CircuitGraph): boolean {
-  const batteries = [...graph.nodes.values()].filter((n) => n.type === "battery");
+  const batteries = Array.from(graph.nodes.values()).filter((n) => n.type === "battery");
   if (batteries.length === 0) return false;
 
   for (const battery of batteries) {
@@ -50,7 +50,7 @@ function hasCompletePath(graph: CircuitGraph): boolean {
       }
     }
     // Check if path goes through a load and returns to battery
-    const hasLoad = [...visited].some((id) => {
+    const hasLoad = Array.from(visited).some((id) => {
       const n = graph.nodes.get(id);
       return n && ["bulb", "resistor", "outlet"].includes(n.type);
     });
@@ -61,7 +61,7 @@ function hasCompletePath(graph: CircuitGraph): boolean {
 
 // ─── Check for short circuits ───
 function hasShortCircuit(graph: CircuitGraph): boolean {
-  const batteries = [...graph.nodes.values()].filter((n) => n.type === "battery");
+  const batteries = Array.from(graph.nodes.values()).filter((n) => n.type === "battery");
   for (const battery of batteries) {
     // Direct connection from + to - with no load = short circuit
     for (const neighbor of battery.connections) {
@@ -91,7 +91,7 @@ function hasShortCircuit(graph: CircuitGraph): boolean {
 
 // ─── Check if switch is in the circuit ───
 function hasSwitchInPath(graph: CircuitGraph): boolean {
-  return [...graph.nodes.values()].some((n) => n.type === "switch");
+  return Array.from(graph.nodes.values()).some((n) => n.type === "switch");
 }
 
 // ─── Validate circuit ───

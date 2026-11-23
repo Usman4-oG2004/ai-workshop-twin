@@ -38,10 +38,10 @@ function buildPipeSystem(components: SimulationComponent[], connections: Connect
 
 // ─── Check flow path from supply to drain ───
 function hasFlowPath(system: PipeSystem): boolean {
-  const faucets = [...system.nodes.values()].filter(
+  const faucets = Array.from(system.nodes.values()).filter(
     (n) => n.type === "faucet" || n.type === "valve"
   );
-  const drains = [...system.nodes.values()].filter((n) => n.type === "drain");
+  const drains = Array.from(system.nodes.values()).filter((n) => n.type === "drain");
 
   if (faucets.length === 0 || drains.length === 0) return false;
 
@@ -85,13 +85,13 @@ function checkPipeSizeCompatibility(system: PipeSystem): SimulationError[] {
 
 // ─── Check for missing trap ───
 function hasTrap(system: PipeSystem): boolean {
-  return [...system.nodes.values()].some((n) => n.type === "trap");
+  return Array.from(system.nodes.values()).some((n) => n.type === "trap");
 }
 
 // ─── Check T-joint connections ───
 function checkTeeConnections(system: PipeSystem): SimulationError[] {
   const errors: SimulationError[] = [];
-  const tees = [...system.nodes.values()].filter((n) => n.type === "pipe-tee");
+  const tees = Array.from(system.nodes.values()).filter((n) => n.type === "pipe-tee");
   tees.forEach((tee) => {
     if (tee.connections.length < 2) {
       errors.push({
