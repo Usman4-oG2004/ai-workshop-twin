@@ -12,6 +12,21 @@ import type {
   LessonCategory,
 } from "@/lib/types";
 
+export interface TelemetryLog {
+  id: string;
+  time: string;
+  level: "info" | "ok" | "warn" | "error";
+  message: string;
+}
+
+function formatTs(): string {
+  const now = new Date();
+  const m = String(now.getMinutes()).padStart(2, "0");
+  const s = String(now.getSeconds()).padStart(2, "0");
+  const ms = String(now.getMilliseconds()).padStart(3, "0");
+  return `${m}:${s}.${ms}`;
+}
+
 // ─── Auth Store ───
 interface AuthStore {
   user: User | null;
@@ -44,6 +59,16 @@ interface SimulationStore {
   currentHintIndex: number;
   startTime: number | null;
 
+  // Interactive Lab Realism State
+  soundEnabled: boolean;
+  isRunning: boolean;
+  switchClosed: boolean;
+  supplyVoltage: number;
+  loadResistance: number;
+  supplyPressure: number;
+  quizMode: boolean;
+  telemetryLogs: TelemetryLog[];
+
   // Actions
   addComponent: (component: SimulationComponent) => void;
   removeComponent: (id: string) => void;
@@ -58,6 +83,18 @@ interface SimulationStore {
   setComplete: (complete: boolean) => void;
   useHint: () => void;
   reset: () => void;
+
+  // Realism Actions
+  toggleSound: () => void;
+  setRunning: (running: boolean) => void;
+  toggleSwitch: () => void;
+  setSupplyVoltage: (v: number) => void;
+  setLoadResistance: (r: number) => void;
+  setSupplyPressure: (psi: number) => void;
+  setQuizMode: (active: boolean) => void;
+  addLog: (level: TelemetryLog["level"], message: string) => void;
+  clearLogs: () => void;
+  setPresetCircuit: (components: SimulationComponent[], connections: Connection[]) => void;
 }
 
 export const useSimulationStore = create<SimulationStore>((set, get) => ({
@@ -72,19 +109,60 @@ export const useSimulationStore = create<SimulationStore>((set, get) => ({
   currentHintIndex: 0,
   startTime: null,
 
+  soundEnabled: true,
+  isRunning: false,
+  switchClosed: true,
+  supplyVoltage: 12,
+  loadResistance: 24,
+  supplyPressure: 55,
+  quizMode: false,
+  telemetryLogs: [
+    {
+      id: "init-1",
+      time: "00:00.000",
+      level: "info",
+      message: "WORKSHOP_TWIN initialized. Deterministic safety rules active.",
+    },
+  ],
+
   addComponent: (component) =>
     set((state) => ({
       components: [...state.components, component],
       startTime: state.startTime || Date.now(),
+      telemetryLogs: [
+        ...state.telemetryLogs.slice(-30),
+        {
+          id: `log-${Date.now()}-${Math.random()}`,
+          time: formatTs(),
+          level: "info",
+          message: `STAGED: ${component.label} at (${component.x}, ${component.y})`,
+        },
+      ],
     })),
 
   removeComponent: (id) =>
-    set((state) => ({
-      components: state.components.filter((c) => c.id !== id),
-      connections: state.connections.filter(
-        (c) => c.from.componentId !== id && c.to.componentId !== id
-      ),
-    })),
+    set((state) => {
+      const target = state.components.find((c) => c.id === id);
+      return {
+        components: state.components.filter((c) => c.id !== id),
+        connections: state.connections.filter(
+          (c) => c.from.componentId !== id && c.to.componentId !== id
+        ),
+        selectedComponent: state.selectedComponent === id ? null : state.selectedComponent,
+        isRunning: false,
+        telemetryLogs: target
+          ? [
+              ...state.telemetryLogs.slice(-30),
+              {
+                id: `log-${Date.now()}`,
+                time: formatTs(),
+                level: "warn",
+                message: `REMOVED: ${target.label}`,
+              },
+            ]
+          : state.telemetryLogs,
+      };
+    }),
 
   moveComponent: (id, x, y) =>
     set((state) => ({
@@ -121,6 +199,15 @@ export const useSimulationStore = create<SimulationStore>((set, get) => ({
     set((state) => ({
       connections: [...state.connections, newConnection],
       connectingFrom: null,
+      telemetryLogs: [
+        ...state.telemetryLogs.slice(-30),
+        {
+          id: `log-${Date.now()}-${Math.random()}`,
+          time: formatTs(),
+          level: "info",
+          message: `CONNECTED: ${connectingFrom.port.toUpperCase()} → ${port.toUpperCase()}`,
+        },
+      ],
     }));
   },
 
@@ -148,7 +235,63 @@ export const useSimulationStore = create<SimulationStore>((set, get) => ({
       hintsUsed: 0,
       currentHintIndex: 0,
       startTime: null,
+      isRunning: false,
+      switchClosed: true,
+      telemetryLogs: [
+        {
+          id: `log-${Date.now()}`,
+          time: formatTs(),
+          level: "info",
+          message: "BENCH_CLEARED: Ready for new build.",
+        },
+      ],
     }),
+
+  toggleSound: () => set((state) => ({ soundEnabled: !state.soundEnabled })),
+  setRunning: (running) => set({ isRunning: running }),
+  toggleSwitch: () =>
+    set((state) => ({
+      switchClosed: !state.switchClosed,
+      telemetryLogs: [
+        ...state.telemetryLogs.slice(-30),
+        {
+          id: `log-${Date.now()}`,
+          time: formatTs(),
+          level: "info",
+          message: `SWITCH_STATE: ${!state.switchClosed ? "CLOSED (Circuit continuous)" : "OPEN (Air gap isolated)"}`,
+        },
+      ],
+    })),
+  setSupplyVoltage: (supplyVoltage) => set({ supplyVoltage }),
+  setLoadResistance: (loadResistance) => set({ loadResistance }),
+  setSupplyPressure: (supplyPressure) => set({ supplyPressure }),
+  setQuizMode: (quizMode) => set({ quizMode }),
+  addLog: (level, message) =>
+    set((state) => ({
+      telemetryLogs: [
+        ...state.telemetryLogs.slice(-35),
+        { id: `log-${Date.now()}-${Math.random()}`, time: formatTs(), level, message },
+      ],
+    })),
+  clearLogs: () => set({ telemetryLogs: [] }),
+  setPresetCircuit: (components, connections) =>
+    set((state) => ({
+      components,
+      connections,
+      errors: [],
+      selectedComponent: null,
+      connectingFrom: null,
+      startTime: state.startTime || Date.now(),
+      telemetryLogs: [
+        ...state.telemetryLogs.slice(-30),
+        {
+          id: `log-${Date.now()}`,
+          time: formatTs(),
+          level: "ok",
+          message: `AUTO_WIRED: Staged ${components.length} components and ${connections.length} leads.`,
+        },
+      ],
+    })),
 }));
 
 // ─── Tutor Store ───

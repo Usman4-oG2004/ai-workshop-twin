@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Wrench, Shield, CheckCircle2 } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
 import PipeCanvas from "@/components/simulator/plumbing/PipeCanvas";
@@ -13,9 +13,10 @@ import TutorAvatar from "@/components/ai-tutor/TutorAvatar";
 import TutorPanel from "@/components/ai-tutor/TutorPanel";
 import { useSimulationStore } from "@/lib/store";
 import { PLUMBING_SCENARIOS, validatePlumbing } from "@/lib/simulation-engine/plumbing";
+import { playAlarm, playSuccess } from "@/lib/sound";
 
 export default function PlumbingWorkshopPage() {
-  const { components, connections, setErrors, setScore, setComplete } = useSimulationStore();
+  const { components, connections, soundEnabled, setErrors, setScore, setComplete } = useSimulationStore();
   const [selectedScenarioId, setSelectedScenarioId] = useState("basic-assembly");
   const [showValidation, setShowValidation] = useState(false);
   const [isWaterTurnedOn, setIsWaterTurnedOn] = useState(false);
@@ -30,6 +31,9 @@ export default function PlumbingWorkshopPage() {
     setShowValidation(true);
     if (result.isValid) {
       setIsWaterTurnedOn(true);
+      playSuccess(soundEnabled);
+    } else {
+      playAlarm(soundEnabled);
     }
   };
 
@@ -38,7 +42,6 @@ export default function PlumbingWorkshopPage() {
       <Navbar />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 w-full flex-1 flex flex-col">
-        {/* Top Breadcrumb & Scenario Bar */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-workshop-border mb-6 gap-3">
           <div className="flex items-center gap-3">
             <Link
@@ -56,13 +59,10 @@ export default function PlumbingWorkshopPage() {
                   PLUMBING LAB
                 </span>
               </div>
-              <div className="text-xs text-chalk-muted font-body">
-                {scenario.description}
-              </div>
+              <div className="text-xs text-chalk-muted font-body">{scenario.description}</div>
             </div>
           </div>
 
-          {/* Scenario Selector Dropdown */}
           <div className="flex items-center gap-2">
             <span className="text-xs font-mono text-chalk-faded">EXERCISE:</span>
             <select
@@ -80,14 +80,11 @@ export default function PlumbingWorkshopPage() {
           </div>
         </div>
 
-        {/* Workbench Grid Layout */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 flex-1 items-start">
-          {/* Left: Fittings Shelf */}
           <div className="md:col-span-3">
             <FittingsShelf />
           </div>
 
-          {/* Center: Interactive Canvas + Controls */}
           <div className="md:col-span-9 space-y-4">
             <PipeCanvas isWaterTurnedOn={isWaterTurnedOn} />
 
@@ -97,9 +94,7 @@ export default function PlumbingWorkshopPage() {
               onToggleWater={() => setIsWaterTurnedOn(!isWaterTurnedOn)}
             />
 
-            {showValidation && (
-              <ValidationPanel onClose={() => setShowValidation(false)} />
-            )}
+            {showValidation && <ValidationPanel onClose={() => setShowValidation(false)} />}
           </div>
         </div>
       </div>
