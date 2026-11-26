@@ -1,38 +1,33 @@
 import type { Metadata } from "next";
-import { Bebas_Neue, Space_Grotesk, Outfit, JetBrains_Mono } from "next/font/google";
+import { Source_Serif_4, IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
 
-const bebasNeue = Bebas_Neue({
-  weight: "400",
+const sourceSerif = Source_Serif_4({
   subsets: ["latin"],
-  variable: "--font-bebas",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-serif",
   display: "swap",
 });
 
-const spaceGrotesk = Space_Grotesk({
+const ibmPlexSans = IBM_Plex_Sans({
   subsets: ["latin"],
-  variable: "--font-space",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-sans",
   display: "swap",
 });
 
-const outfit = Outfit({
+const ibmPlexMono = IBM_Plex_Mono({
   subsets: ["latin"],
-  variable: "--font-outfit",
-  display: "swap",
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-jetbrains",
+  weight: ["400", "500", "600"],
+  variable: "--font-mono",
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "AI Workshop Twin | ISA — Learn Electrical & Plumbing Skills",
+  title: "Imperial Skills Academy | Trade Simulation & Assessment Bench",
   description:
-    "Make 20 mistakes in a virtual workshop before making one in a real workshop. Interactive AI-powered training for beginner electricians and plumbers.",
-  keywords: ["AI", "skilled trades", "electrical training", "plumbing training", "vocational", "ISA"],
+    "Interactive 3D electrical installation (BS 7671) and domestic plumbing commissioning (WRAS) training bench for vocational apprentices and instructors.",
 };
 
 export default function RootLayout({
@@ -43,22 +38,20 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${bebasNeue.variable} ${spaceGrotesk.variable} ${outfit.variable} ${jetbrainsMono.variable}`}
+      className={`${sourceSerif.variable} ${ibmPlexSans.variable} ${ibmPlexMono.variable}`}
     >
-      <body className="min-h-screen bg-workshop-bg">
-        {/* Scan-line overlay */}
-        <div className="fixed inset-0 pointer-events-none z-[100] opacity-[0.015] bg-scan-lines" />
+      <body className="min-h-screen bg-paper text-ink font-sans antialiased">
         {children}
         <Toaster
           position="bottom-right"
           toastOptions={{
             style: {
-              background: "#1A1A1E",
-              color: "#FAFAFA",
-              border: "1px solid #2A2A2F",
-              borderRadius: "2px",
-              fontFamily: "var(--font-outfit)",
-              fontSize: "14px",
+              background: "#18181B",
+              color: "#FAF8F3",
+              border: "1px solid #3F3F46",
+              borderRadius: "4px",
+              fontFamily: "var(--font-sans)",
+              fontSize: "13px",
             },
           }}
         />

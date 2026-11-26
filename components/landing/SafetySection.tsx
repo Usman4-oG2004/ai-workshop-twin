@@ -1,76 +1,51 @@
 "use client";
 
-import { ShieldAlert, Cpu, UserCheck, BookOpenCheck } from "lucide-react";
-
 export default function SafetySection() {
   const pillars = [
     {
-      title: "Deterministic Safety Rules",
-      desc: "AI is never used to judge real-time electrical continuity or hydraulic containment. Fixed rule-based simulation engines validate circuits and pipe connections 100% deterministically.",
-      icon: Cpu,
-      badge: "Non-Hallucinatory",
+      title: "Deterministic Rule Validation",
+      desc: "Short-circuit detection, reversed polarity, open CPC earth, and compression leak checks run on strict mathematical rules — never generative AI guesses.",
+      tag: "Non-Hallucinatory",
     },
     {
-      title: "Grounded Course Material",
-      desc: "The AI Foreman responds strictly using instructor-approved ISA training handouts. Every technical explanation cites its handbook reference module directly.",
-      icon: BookOpenCheck,
-      badge: "ISA Grounded",
+      title: "Instructor-Approved Course Notes",
+      desc: "The AI Tutor only cites materials uploaded and approved by ISA instructors, keeping explanations aligned with UK trade terminology.",
+      tag: "Grounded RAG",
     },
     {
-      title: "Human Instructor Gate",
-      desc: "Any dangerous action or inquiry about live mains voltages automatically disables simulation power and routes the question into the instructor review queue.",
-      icon: ShieldAlert,
-      badge: "Mandatory Supervisor",
+      title: "Uncertainty Escalation",
+      desc: "Questions outside the approved syllabus or involving live mains work are automatically flagged for the human instructor queue.",
+      tag: "Supervisor Queue",
     },
     {
-      title: "Supervised Low-Voltage Physical Kits",
-      desc: "Virtual simulation prepares the student for hands-on kits (12V safe DC). Live bench power remains physically interlocked until the instructor checks the build checklist.",
-      icon: UserCheck,
-      badge: "Zero-Hazard Pilot",
+      title: "Physical Bay Interlock",
+      desc: "Virtual completion unlocks the pre-energize safety checklist; real bench supplies remain locked off until inspected by an instructor.",
+      tag: "Live Bay Gate",
     },
   ];
 
   return (
-    <section className="py-20 bg-workshop-bg border-b border-workshop-border">
+    <section className="py-16 bg-paper">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="p-6 md:p-10 border-2 border-amber-500/40 bg-workshop-surface/60 rounded-workshop relative overflow-hidden">
-          <div className="hazard-stripe absolute top-0 left-0 right-0 h-2" />
+        <div className="mb-10">
+          <div className="text-[11px] font-mono uppercase tracking-widest text-ink-faded mb-1.5">
+            04 &mdash; ACCURACY &amp; SAFETY GOVERNANCE
+          </div>
+          <h2 className="font-serif text-3xl font-semibold text-ink">
+            Engineered for Real Trade Standards
+          </h2>
+        </div>
 
-          <div className="max-w-2xl mb-12">
-            <div className="work-order-tag bg-amber-500/10 border-amber-500 text-amber-400 mb-3">
-              <span>SAFETY GOVERNANCE PROTOCOL</span>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          {pillars.map((p) => (
+            <div key={p.title} className="workshop-card p-6">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="font-serif text-lg font-semibold text-ink">{p.title}</h3>
+                <span className="work-order-tag text-[10px]">{p.tag}</span>
+              </div>
+              <p className="text-xs text-ink-muted leading-relaxed">{p.desc}</p>
             </div>
-            <h2 className="font-display uppercase text-3xl sm:text-5xl text-chalk tracking-wide">
-              Accuracy &amp; Safety by Design
-            </h2>
-            <p className="mt-3 text-sm text-chalk-muted font-body leading-relaxed">
-              Vocational skilled trades cannot tolerate AI hallucinations. Here is how Imperial Skills Academy maintains complete pedagogical safety and regulatory rigor:
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {pillars.map((p) => {
-              const Icon = p.icon;
-              return (
-                <div key={p.title} className="p-5 bg-workshop-bg border border-workshop-border rounded-workshop">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="w-8 h-8 rounded-workshop bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
-                      <Icon className="w-4 h-4" />
-                    </div>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-workshop bg-workshop-surface border border-workshop-border text-amber-400">
-                      {p.badge}
-                    </span>
-                  </div>
-                  <h3 className="font-heading font-medium text-sm text-chalk mb-2">
-                    {p.title}
-                  </h3>
-                  <p className="text-xs text-chalk-muted font-body leading-relaxed">
-                    {p.desc}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
+          ))}
         </div>
       </div>
     </section>

@@ -1,179 +1,336 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { cn } from '@/lib/utils';
-import { useSimulationStore } from '@/lib/store';
-import { ELECTRICAL_SCENARIOS } from '@/lib/simulation-engine/electrical';
-import CircuitCanvas from '@/components/simulator/electrical/CircuitCanvas';
-import ComponentShelf from '@/components/simulator/electrical/ComponentShelf';
-import CircuitControls from '@/components/simulator/electrical/CircuitControls';
-import ValidationPanel from '@/components/simulator/electrical/ValidationPanel';
+import { useState } from 'react';
+import Link from 'next/link';
+import Navbar from '@/components/ui/Navbar';
+import Footer from '@/components/ui/Footer';
+import Electrical3DRig, {
+  type Electrical3DState,
+  type ElectricalFaultMode,
+} from '@/components/simulator/electrical/Electrical3DRig';
 import TutorAvatar from '@/components/ai-tutor/TutorAvatar';
 import TutorPanel from '@/components/ai-tutor/TutorPanel';
+import { playClick, playConnect, playEnergize, playAlarm } from '@/lib/sound';
+import { cn } from '@/lib/utils';
 
-// ═══════════════════════════════════════
-// Electrical Workshop Page
-// ═══════════════════════════════════════
-
-type ScenarioKey = keyof typeof ELECTRICAL_SCENARIOS;
+const WIRING_STEPS = [
+  {
+    step: 1,
+    title: 'Route Brown Line Conductor (6A MCB → Switch COM)',
+    detail: 'BS 6004 1.5mm² Twin & Earth brown insulated conductor.',
+  },
+  {
+    step: 2,
+    title: 'Route Switched Line (Switch L1 → Luminaire L)',
+    detail: 'Sleeved brown at switch return terminal to ceiling batten live.',
+  },
+  {
+    step: 3,
+    title: 'Route Blue Neutral Return (Luminaire N → CU Neutral Bar)',
+    detail: 'Continuous blue neutral return path to Consumer Unit busbar.',
+  },
+  {
+    step: 4,
+    title: 'Connect Green/Yellow CPC Earth (CU Earth Bar → Backbox & Fitting)',
+    detail: 'Mandatory Circuit Protective Conductor continuity (R1+R2).',
+  },
+];
 
 export default function ElectricalWorkshopPage() {
-  const [scenarioId, setScenarioId] = useState<ScenarioKey>('first-circuit');
-  const [showTutor, setShowTutor] = useState(false);
-  const reset = useSimulationStore((s) => s.reset);
-  const components = useSimulationStore((s) => s.components);
-  const isComplete = useSimulationStore((s) => s.isComplete);
+  const [rig, setRig] = useState<Electrical3DState>({
+    mainIsolatorOn: false,
+    mcb6AOn: false,
+    wallSwitchOn: true,
+    wiredSteps: 0,
+    faultMode: 'none',
+    safeIsolated: true,
+    cameraPreset: '3/4',
+    labelsVisible: true,
+  });
 
-  const scenario = ELECTRICAL_SCENARIOS[scenarioId];
-  const scenarioKeys = Object.keys(ELECTRICAL_SCENARIOS) as ScenarioKey[];
+  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [logs, setLogs] = useState<{ ts: string; level: 'info' | 'ok' | 'err'; msg: string }[]>([
+    { ts: '00:00.000', level: 'info', msg: 'BAY_01_READY: 230V AC supply locked off. GS38 isolation verified.' },
+  ]);
 
-  // Reset simulation when scenario changes
-  useEffect(() => {
-    reset();
-  }, [scenarioId, reset]);
+  const appendLog = (level: 'info' | 'ok' | 'err', msg: string) => {
+    const now = new Date();
+    const ts = `${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}.${String(now.getMilliseconds()).padStart(3, '0')}`;
+    setLogs((prev) => [...prev.slice(-24), { ts, level, msg }]);
+  };
+
+  const handleStepWire = (stepNum: number) => {
+    if (rig.mainIsolatorOn) {
+      playAlarm(soundEnabled);
+      appendLog('err', 'SAFETY VIOLATION: Isolate 100A Main Switch before altering conductors.');
+      return;
+    }
+    playConnect(soundEnabled);
+    setRig((s) => ({ ...s, wiredSteps: stepNum }));
+    appendLog('ok', `CONDUCTOR_TERMINATED: Step ${stepNum} (${WIRING_STEPS[stepNum - 1].title})`);
+  };
+
+  const handleAutoWireAll = () => {
+    if (rig.mainIsolatorOn) {
+      setRig((s) => ({ ...s, mainIsolatorOn: false, mcb6AOn: false, wiredSteps: 4 }));
+    } else {
+      setRig((s) => ({ ...s, wiredSteps: 4 }));
+    }
+    playConnect(soundEnabled);
+    appendLog('ok', 'COMPLETE_LOOM_ROUTED: L, Switched L, N, and CPC Earth terminated to BS 7671.');
+  };
+
+  const handleToggleMain = () => {
+    const next = !rig.mainIsolatorOn;
+    playClick(soundEnabled);
+    setRig((s) => ({ ...s, mainIsolatorOn: next, safeIsolated: !next }));
+    appendLog('info', `MAIN_ISOLATOR_100A: ${next ? 'CLOSED (Live Busbar)' : 'OPEN (Safe Isolated)'}`);
+  };
+
+  const handleToggleMcb = () => {
+    if (!rig.mainIsolatorOn) {
+      playClick(soundEnabled);
+      setRig((s) => ({ ...s, mcb6AOn: !s.mcb6AOn }));
+      return;
+    }
+    if (!rig.mcb6AOn && rig.faultMode === 'short-ln') {
+      playAlarm(soundEnabled);
+      appendLog('err', '6A_MCB_TRIPPED: Dead short detected (Line-to-Neutral). Magnetic trip <10ms.');
+      setRig((s) => ({ ...s, mcb6AOn: false }));
+      return;
+    }
+    const next = !rig.mcb6AOn;
+    if (next) playEnergize(soundEnabled);
+    else playClick(soundEnabled);
+    setRig((s) => ({ ...s, mcb6AOn: next }));
+    appendLog(next ? 'ok' : 'info', `MCB_6A_LIGHTING: ${next ? 'ENERGIZED (230.4V AC)' : 'OFF'}`);
+  };
+
+  const handleToggleSwitch = () => {
+    playClick(soundEnabled);
+    setRig((s) => ({ ...s, wallSwitchOn: !s.wallSwitchOn }));
+    appendLog('info', `WALL_SWITCH_10AX: ${!rig.wallSwitchOn ? 'CLOSED' : 'OPEN'}`);
+  };
+
+  // Instrument Readings (MFT)
+  const supplyLive = rig.mainIsolatorOn && rig.mcb6AOn && rig.faultMode !== 'short-ln';
+  const circuitClosed = supplyLive && rig.wiredSteps >= 3 && rig.wallSwitchOn && rig.faultMode === 'none';
+  const voltsReading = supplyLive && rig.wiredSteps >= 1 ? '230.4 V' : '000.0 V';
+  const ampsReading = circuitClosed ? '0.026 A' : '0.000 A';
+  const r1r2Reading =
+    rig.wiredSteps >= 4 && rig.faultMode !== 'no-earth' ? '0.34 Ω' : 'OPEN (FAIL)';
+  const irReading = rig.faultMode === 'short-ln' ? '0.02 MΩ (FAULT)' : '>299 MΩ (PASS)';
 
   return (
-    <div className="flex flex-col h-screen bg-workshop-bg text-chalk">
-      {/* ─── Top Bar ─── */}
-      <header className="flex-shrink-0 flex items-center justify-between px-4 py-2 bg-workshop-surface border-b border-workshop-border">
-        <div className="flex items-center gap-4">
-          {/* Back link */}
-          <a
-            href="/"
-            className="text-xs font-mono text-chalk-faded hover:text-amber-400 transition-colors tracking-wider"
-          >
-            ← WORKSHOP
-          </a>
+    <main className="min-h-screen flex flex-col bg-paper text-ink">
+      <Navbar />
 
-          {/* Divider */}
-          <div className="w-px h-5 bg-workshop-border" />
-
-          {/* Title */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 w-full flex-1 space-y-5">
+        {/* Header Bar */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-workshop-border gap-3">
           <div>
-            <h1 className="font-display text-xl text-amber-500 tracking-wider leading-none">
-              ⚡ ELECTRICAL LAB
+            <div className="text-[11px] font-mono uppercase tracking-widest text-trade-electrical font-semibold">
+              BS 7671 &bull; BAY 01 DOMESTIC LIGHTING COMMISSIONING
+            </div>
+            <h1 className="font-serif text-2xl sm:text-3xl font-semibold text-ink">
+              1-Way Lighting Circuit &amp; Consumer Unit
             </h1>
           </div>
-        </div>
 
-        <div className="flex items-center gap-3">
-          {/* Scenario selector */}
-          <div className="flex items-center gap-2">
-            <span className="text-[9px] font-mono text-chalk-faded tracking-widest">SCENARIO</span>
-            <select
-              value={scenarioId}
-              onChange={(e) => setScenarioId(e.target.value as ScenarioKey)}
-              className={cn(
-                'bg-workshop-bg border border-workshop-border rounded-workshop',
-                'text-xs font-heading text-chalk px-2 py-1.5',
-                'focus:outline-none focus:border-amber-500/40',
-                'cursor-pointer appearance-none pr-6',
-                'hover:border-workshop-border-light transition-colors'
-              )}
-              style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2371717A'/%3E%3C/svg%3E")`,
-                backgroundRepeat: 'no-repeat',
-                backgroundPosition: 'right 8px center',
-              }}
-            >
-              {scenarioKeys.map((key) => (
-                <option key={key} value={key}>
-                  {ELECTRICAL_SCENARIOS[key].title}
-                </option>
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Camera Presets */}
+            <div className="flex items-center bg-paper-lo p-1 rounded-workshop border border-workshop-border text-[11px] font-mono">
+              {(['3/4', 'front', 'cu', 'switch'] as const).map((preset) => (
+                <button
+                  key={preset}
+                  onClick={() => setRig((s) => ({ ...s, cameraPreset: preset }))}
+                  className={cn(
+                    'px-2.5 py-1 rounded-workshop uppercase transition-colors',
+                    rig.cameraPreset === preset ? 'bg-ink text-paper-hi' : 'text-ink-muted hover:text-ink'
+                  )}
+                >
+                  {preset === 'cu' ? 'Consumer Unit' : preset}
+                </button>
               ))}
-            </select>
+            </div>
+
+            <button
+              onClick={() => setSoundEnabled(!soundEnabled)}
+              className="btn-workshop-secondary py-1.5 px-3 text-[11px] font-mono"
+            >
+              {soundEnabled ? 'Audio: On' : 'Audio: Muted'}
+            </button>
           </div>
-
-          {/* Progress pills */}
-          <div className="flex items-center gap-1.5 ml-2">
-            <div className={cn(
-              'h-1.5 w-8 rounded-full transition-colors',
-              components.length > 0 ? 'bg-amber-500' : 'bg-workshop-border'
-            )} />
-            <div className={cn(
-              'h-1.5 w-8 rounded-full transition-colors',
-              components.length >= 3 ? 'bg-amber-500' : 'bg-workshop-border'
-            )} />
-            <div className={cn(
-              'h-1.5 w-8 rounded-full transition-colors',
-              isComplete ? 'bg-safety-green' : 'bg-workshop-border'
-            )} />
-          </div>
-
-          {/* Tutor toggle */}
-          <button
-            onClick={() => setShowTutor(!showTutor)}
-            className={cn(
-              'px-3 py-1.5 text-xs font-heading tracking-wide rounded-workshop transition-all',
-              showTutor
-                ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40'
-                : 'bg-workshop-bg text-chalk-muted border border-workshop-border hover:border-workshop-border-light'
-            )}
-          >
-            {showTutor ? '🎓 TUTOR ON' : '🎓 TUTOR'}
-          </button>
-        </div>
-      </header>
-
-      {/* ─── Scenario description bar ─── */}
-      <div className="flex-shrink-0 px-4 py-2 bg-workshop-bg border-b border-workshop-border/50 flex items-center gap-3">
-        <span className="work-order-tag text-[9px] font-mono text-amber-500 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-workshop tracking-widest">
-          WORK ORDER
-        </span>
-        <p className="text-xs font-body text-chalk-dim">
-          {scenario?.description}
-        </p>
-        {scenario?.requiredComponents && (
-          <div className="ml-auto flex items-center gap-1">
-            {scenario.requiredComponents.map((type: string) => (
-              <span
-                key={type}
-                className="text-[8px] font-mono text-chalk-faded bg-workshop-elevated px-1.5 py-0.5 rounded-workshop border border-workshop-border"
-              >
-                {type.toUpperCase()}
-              </span>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* ─── Main Content ─── */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Left: Component Shelf */}
-        <ComponentShelf />
-
-        {/* Center: Circuit Canvas */}
-        <div className="flex-1 flex flex-col overflow-hidden">
-          <CircuitCanvas />
-          <CircuitControls scenarioId={scenarioId} />
         </div>
 
-        {/* Right: Validation Panel / Tutor toggle area */}
-        {showTutor ? (
-          <div className="w-72 flex-shrink-0 h-full bg-workshop-surface border-l border-workshop-border flex flex-col items-center justify-center p-6">
-            <div className="text-center space-y-3">
-              <div className="w-14 h-14 mx-auto rounded-workshop bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
-                <span className="text-2xl">🎓</span>
+        {/* Main 3D Rig + Side Commissioning Controls */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+          {/* 3D Viewport */}
+          <div className="lg:col-span-8 space-y-3">
+            <Electrical3DRig
+              state={rig}
+              onToggleMainIsolator={handleToggleMain}
+              onToggleMcb={handleToggleMcb}
+              onToggleWallSwitch={handleToggleSwitch}
+            />
+
+            {/* Digital MFT Instrument Strip */}
+            <div className="bg-[#141619] text-[#E2E8F0] rounded-workshop border border-zinc-700 p-4 font-mono grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <div>
+                <div className="text-[10px] text-zinc-400 uppercase">Supply Voltage (L-N)</div>
+                <div className="text-lg font-semibold text-amber-400">{voltsReading}</div>
+                <div className="text-[10px] text-zinc-500">50.0 Hz AC</div>
               </div>
-              <p className="font-display text-sm text-amber-400 tracking-wider">
-                WORKSHOP FOREMAN
-              </p>
-              <p className="text-[10px] font-mono text-chalk-faded leading-relaxed">
-                AI TUTOR PANEL<br />LOADS HERE
-              </p>
+              <div>
+                <div className="text-[10px] text-zinc-400 uppercase">Load Current</div>
+                <div className="text-lg font-semibold text-emerald-400">{ampsReading}</div>
+                <div className="text-[10px] text-zinc-500">6W LED Batten</div>
+              </div>
+              <div>
+                <div className="text-[10px] text-zinc-400 uppercase">Continuity (R1+R2)</div>
+                <div className={cn('text-lg font-semibold', r1r2Reading.includes('FAIL') ? 'text-red-400' : 'text-emerald-400')}>
+                  {r1r2Reading}
+                </div>
+                <div className="text-[10px] text-zinc-500">CPC Earth Loop</div>
+              </div>
+              <div>
+                <div className="text-[10px] text-zinc-400 uppercase">Insulation (500V DC)</div>
+                <div className={cn('text-lg font-semibold', irReading.includes('FAULT') ? 'text-red-400' : 'text-emerald-400')}>
+                  {irReading}
+                </div>
+                <div className="text-[10px] text-zinc-500">Min &ge; 1.0 MΩ</div>
+              </div>
             </div>
           </div>
-        ) : (
-          <ValidationPanel />
-        )}
+
+          {/* Right Panel: Wiring Sequence, Breakers & Fault Injection */}
+          <div className="lg:col-span-4 space-y-4">
+            {/* Conductor Termination Sequence */}
+            <div className="workshop-card p-4 space-y-3">
+              <div className="flex items-center justify-between border-b border-workshop-border pb-2">
+                <span className="text-xs font-mono uppercase tracking-wider font-semibold text-ink">
+                  1. Conductor Termination
+                </span>
+                <button
+                  onClick={handleAutoWireAll}
+                  className="text-[11px] font-mono text-trade-electrical hover:underline font-semibold"
+                >
+                  Terminate All (Demo)
+                </button>
+              </div>
+
+              <div className="space-y-2">
+                {WIRING_STEPS.map((w) => {
+                  const done = rig.wiredSteps >= w.step;
+                  return (
+                    <button
+                      key={w.step}
+                      onClick={() => handleStepWire(w.step)}
+                      className={cn(
+                        'w-full text-left p-2.5 rounded-workshop border text-xs transition-colors',
+                        done
+                          ? 'bg-emerald-50/70 border-safety-green/40 text-ink'
+                          : 'bg-paper border-workshop-border hover:border-ink text-ink-secondary'
+                      )}
+                    >
+                      <div className="flex items-center justify-between font-medium">
+                        <span>{w.step}. {w.title}</span>
+                        <span className="font-mono text-[10px] uppercase">
+                          {done ? 'TERMINATED' : 'ROUTE'}
+                        </span>
+                      </div>
+                      <div className="text-[11px] text-ink-faded mt-0.5">{w.detail}</div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Consumer Unit Controls */}
+            <div className="workshop-card p-4 space-y-3">
+              <div className="text-xs font-mono uppercase tracking-wider font-semibold text-ink border-b border-workshop-border pb-2">
+                2. Commissioning &amp; Isolation
+              </div>
+
+              <div className="grid grid-cols-3 gap-2 text-xs font-mono">
+                <button
+                  onClick={handleToggleMain}
+                  className={cn(
+                    'py-2 px-2 rounded-workshop border font-semibold transition-colors',
+                    rig.mainIsolatorOn
+                      ? 'bg-red-700 text-white border-red-800'
+                      : 'bg-paper text-ink border-workshop-border hover:border-ink'
+                  )}
+                >
+                  Main: {rig.mainIsolatorOn ? 'ON' : 'OFF'}
+                </button>
+                <button
+                  onClick={handleToggleMcb}
+                  className={cn(
+                    'py-2 px-2 rounded-workshop border font-semibold transition-colors',
+                    rig.mcb6AOn
+                      ? 'bg-amber-700 text-white border-amber-800'
+                      : 'bg-paper text-ink border-workshop-border hover:border-ink'
+                  )}
+                >
+                  6A MCB: {rig.mcb6AOn ? 'ON' : 'OFF'}
+                </button>
+                <button
+                  onClick={handleToggleSwitch}
+                  className={cn(
+                    'py-2 px-2 rounded-workshop border font-semibold transition-colors',
+                    rig.wallSwitchOn
+                      ? 'bg-ink text-paper-hi border-ink'
+                      : 'bg-paper text-ink border-workshop-border hover:border-ink'
+                  )}
+                >
+                  Switch: {rig.wallSwitchOn ? 'ON' : 'OFF'}
+                </button>
+              </div>
+
+              {/* Fault Injection */}
+              <div className="pt-2 border-t border-rule-soft">
+                <label className="block text-[10px] font-mono uppercase tracking-wider text-ink-faded mb-1.5">
+                  Diagnostic Fault Scenario
+                </label>
+                <select
+                  value={rig.faultMode}
+                  onChange={(e) => {
+                    const mode = e.target.value as ElectricalFaultMode;
+                    setRig((s) => ({ ...s, faultMode: mode, mcb6AOn: false }));
+                    appendLog('info', `SCENARIO_LOADED: ${mode.toUpperCase()}`);
+                  }}
+                  className="input-workshop py-1.5 text-xs font-mono"
+                >
+                  <option value="none">Nominal Installation (No Fault)</option>
+                  <option value="short-ln">Fault: Line-to-Neutral Dead Short (MCB Trip)</option>
+                  <option value="open-neutral">Fault: Open Neutral Conductor</option>
+                  <option value="no-earth">Fault: Disconnected CPC Earth</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Live Commissioning Log */}
+            <div className="bg-[#141619] text-[#E2E8F0] rounded-workshop border border-zinc-700 p-3 font-mono text-[10px] h-36 overflow-y-auto space-y-1.5">
+              <div className="text-zinc-400 uppercase tracking-wider border-b border-zinc-800 pb-1">
+                Commissioning Telemetry Log
+              </div>
+              {logs.map((l, i) => (
+                <div key={i}>
+                  <span className="text-zinc-500 mr-1.5">[{l.ts}]</span>
+                  <span className={l.level === 'err' ? 'text-red-400' : l.level === 'ok' ? 'text-emerald-400' : 'text-zinc-300'}>
+                    {l.msg}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* ─── Hazard stripe footer ─── */}
-      <div className="flex-shrink-0 h-1 bg-hazard-stripe" />
-
-      {/* ─── AI Tutor Foreman ─── */}
+      <Footer />
       <TutorAvatar />
-      <TutorPanel lessonTitle={scenario?.title} category="electrical" />
-    </div>
+      <TutorPanel lessonTitle="BS 7671 1-Way Lighting Circuit" category="electrical" />
+    </main>
   );
 }

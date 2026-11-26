@@ -1,94 +1,72 @@
 import Link from "next/link";
-import { Shield, Zap, Wrench, Terminal, Cpu } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-workshop-border bg-workshop-surface/60 relative overflow-hidden">
-      <div className="hazard-stripe w-full" />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
-          {/* Brand Info */}
-          <div className="md:col-span-2 space-y-3">
-            <div className="flex items-center gap-2">
-              <span className="font-display text-2xl text-chalk">AI WORKSHOP TWIN</span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-workshop bg-amber-500/10 text-amber-400 border border-amber-500/30">
-                ISA PILOT EDITION
-              </span>
+    <footer className="border-t border-workshop-border bg-paper-lo/60">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+          <div className="md:col-span-2 space-y-2.5">
+            <div className="font-serif text-lg font-semibold text-ink">
+              Imperial Skills Academy — Virtual Trade Bench
             </div>
-            <p className="text-sm text-chalk-muted max-w-md font-body leading-relaxed">
-              &quot;Make 20 mistakes in a virtual workshop before making one in a real workshop.&quot;
-              Multimodal AI tutoring and deterministic simulation rules built specifically for Imperial Skills Academy beginners.
+            <p className="text-xs text-ink-muted max-w-md leading-relaxed">
+              Procedural 3D WebGL training rigs and deterministic commissioning checks for domestic electrical installation (BS 7671) and plumbing pipework (WRAS).
             </p>
-            <div className="flex items-center gap-3 pt-2 text-xs font-mono text-chalk-faded">
-              <span className="inline-flex items-center gap-1">
-                <Shield className="w-3.5 h-3.5 text-safety-green" /> 100% Supervised Safety Gate
-              </span>
-              <span>•</span>
-              <span className="inline-flex items-center gap-1">
-                <Cpu className="w-3.5 h-3.5 text-arc-400" /> Deterministic Rule Verification
-              </span>
+            <div className="text-[11px] font-mono text-ink-faded pt-1">
+              All 3D hardware, copper fittings, consumer units, and instruments are procedurally rendered in real time.
             </div>
           </div>
 
-          {/* Quick Links */}
           <div>
-            <div className="text-xs font-mono uppercase tracking-widest text-chalk mb-3">Simulation Labs</div>
-            <ul className="space-y-2 text-xs font-mono text-chalk-muted">
+            <div className="text-[11px] font-mono uppercase tracking-widest text-ink-faded mb-3">
+              Training Bays
+            </div>
+            <ul className="space-y-2 text-xs text-ink-secondary">
               <li>
-                <Link href="/workshop/electrical" className="hover:text-amber-400 transition-colors flex items-center gap-1.5">
-                  <Zap className="w-3 h-3 text-amber-500" /> Electrical Circuit Lab
+                <Link href="/workshop/electrical" className="hover:text-ink hover:underline">
+                  Electrical Installation Bay
                 </Link>
               </li>
               <li>
-                <Link href="/workshop/plumbing" className="hover:text-arc-400 transition-colors flex items-center gap-1.5">
-                  <Wrench className="w-3 h-3 text-arc-400" /> Pipe Assembly Lab
+                <Link href="/workshop/plumbing" className="hover:text-ink hover:underline">
+                  Plumbing Commissioning Rig
                 </Link>
               </li>
               <li>
-                <Link href="/learn" className="hover:text-chalk transition-colors flex items-center gap-1.5">
-                  <Terminal className="w-3 h-3 text-chalk-faded" /> Work Order Modules
+                <Link href="/learn" className="hover:text-ink hover:underline">
+                  Curriculum &amp; Job Sheets
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Instructor & Governance */}
           <div>
-            <div className="text-xs font-mono uppercase tracking-widest text-chalk mb-3">Instructor Supervision</div>
-            <ul className="space-y-2 text-xs font-mono text-chalk-muted">
+            <div className="text-[11px] font-mono uppercase tracking-widest text-ink-faded mb-3">
+              Supervision
+            </div>
+            <ul className="space-y-2 text-xs text-ink-secondary">
               <li>
-                <Link href="/instructor" className="hover:text-chalk transition-colors">
+                <Link href="/instructor" className="hover:text-ink hover:underline">
                   Instructor Control Room
                 </Link>
               </li>
               <li>
-                <Link href="/instructor/students" className="hover:text-chalk transition-colors">
-                  Diagnostic Evidence Log
+                <Link href="/instructor/students" className="hover:text-ink hover:underline">
+                  Observation Evidence Log
                 </Link>
               </li>
               <li>
-                <Link href="/instructor/content" className="hover:text-chalk transition-colors">
-                  Curriculum & Safety Approvals
-                </Link>
-              </li>
-              <li>
-                <Link href="/instructor/analytics" className="hover:text-chalk transition-colors">
-                  Skill Assessment Matrix
+                <Link href="/instructor/content" className="hover:text-ink hover:underline">
+                  Approved Course Notes
                 </Link>
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="pt-6 border-t border-workshop-border flex flex-col sm:flex-row items-center justify-between text-xs font-mono text-chalk-faded gap-3">
-          <div>
-            Built for Ahsan Naeem portfolio demonstration &bull; Imperial Skills Academy (ISA) trade training.
-          </div>
-          <div className="flex items-center gap-4">
-            <span>Deterministic Circuit Engine</span>
-            <span>&bull;</span>
-            <span>Gemini Multimodal RAG</span>
-          </div>
+        <div className="pt-5 border-t border-workshop-border flex flex-col sm:flex-row items-center justify-between text-[11px] font-mono text-ink-faded gap-2">
+          <div>Imperial Skills Academy Pilot &bull; Built by Ahsan Naeem</div>
+          <div>Deterministic Validation Engine &bull; Grounded AI Tutor</div>
         </div>
       </div>
     </footer>

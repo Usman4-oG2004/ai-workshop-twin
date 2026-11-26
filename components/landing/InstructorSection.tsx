@@ -1,129 +1,74 @@
 "use client";
 
 import Link from "next/link";
-import { Gauge, CheckCircle2, AlertTriangle, Eye, ArrowRight, ShieldCheck } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 export default function InstructorSection() {
   return (
-    <section className="py-20 bg-workshop-surface/30 border-b border-workshop-border">
+    <section className="py-16 bg-paper-hi border-b border-workshop-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          {/* Left Text */}
-          <div className="lg:col-span-6 space-y-6">
-            <div className="work-order-tag bg-arc-500/10 border-arc-500/30 text-arc-400">
-              <span>INSTRUCTOR SUPERVISION CONTROL</span>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+          <div className="lg:col-span-6 space-y-5">
+            <div className="text-[11px] font-mono uppercase tracking-widest text-ink-faded">
+              03 &mdash; INSTRUCTOR OBSERVATION MODEL
             </div>
-
-            <h2 className="font-display uppercase text-4xl sm:text-5xl text-chalk tracking-wide leading-tight">
-              Actionable Observations.
-              <br />
-              <span className="text-chalk-muted">Never Arbitrary Labels.</span>
+            <h2 className="font-serif text-3xl font-semibold text-ink leading-tight">
+              Factual workshop observations. Never premature aptitude labels.
             </h2>
-
-            <p className="text-sm text-chalk-muted font-body leading-relaxed">
-              In vocational training, judging a beginner as &quot;good&quot; or &quot;poor&quot; from a single introductory circuit destroys morale.
-              The AI Workshop Twin captures specific, evidence-backed diagnostics so instructors can coach individual technical habits.
+            <p className="text-sm text-ink-secondary leading-relaxed">
+              A beginner seeing a consumer unit or compression fitting for the first time should never be ranked or labeled as a &quot;good&quot; or &quot;poor&quot; fit. The system logs objective, timestamped actions so instructors can coach technique directly.
             </p>
 
-            <div className="space-y-3 pt-2">
-              <div className="flex items-start gap-3 p-3 rounded-workshop bg-workshop-surface border border-workshop-border">
-                <CheckCircle2 className="w-4 h-4 text-safety-green mt-0.5 shrink-0" />
-                <div>
-                  <div className="text-xs font-heading font-medium text-chalk">
-                    &quot;Checked 4 of 4 connections before energizing switch&quot;
-                  </div>
-                  <div className="text-[11px] font-mono text-chalk-faded">
-                    Demonstrates systematic safety discipline without rushing
-                  </div>
-                </div>
+            <div className="space-y-2.5 pt-1">
+              <div className="p-3.5 bg-paper border border-workshop-border rounded-workshop text-xs">
+                <div className="font-mono text-[10px] text-safety-green uppercase mb-1">Recorded Evidence</div>
+                <div className="font-medium text-ink">&quot;Verified dead circuit with GS38 voltage indicator before opening switch plate.&quot;</div>
               </div>
-
-              <div className="flex items-start gap-3 p-3 rounded-workshop bg-workshop-surface border border-workshop-border">
-                <AlertTriangle className="w-4 h-4 text-safety-yellow mt-0.5 shrink-0" />
-                <div>
-                  <div className="text-xs font-heading font-medium text-chalk">
-                    &quot;Changed switch and bulb simultaneously during fault diagnosis&quot;
-                  </div>
-                  <div className="text-[11px] font-mono text-chalk-faded">
-                    Targeted coaching cue: teach single-variable fault isolation
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3 p-3 rounded-workshop bg-workshop-surface border border-workshop-border">
-                <ShieldCheck className="w-4 h-4 text-arc-400 mt-0.5 shrink-0" />
-                <div>
-                  <div className="text-xs font-heading font-medium text-chalk">
-                    &quot;Selected fault diagnosis track 3x in a row&quot;
-                  </div>
-                  <div className="text-[11px] font-mono text-chalk-faded">
-                    Surfaces genuine personal interest in diagnostics vs construction
-                  </div>
-                </div>
+              <div className="p-3.5 bg-paper border border-workshop-border rounded-workshop text-xs">
+                <div className="font-mono text-[10px] text-trade-electrical uppercase mb-1">Coaching Cue</div>
+                <div className="font-medium text-ink">&quot;Replaced both the 6A MCB and lamp simultaneously during fault isolation.&quot;</div>
               </div>
             </div>
 
             <div className="pt-2">
-              <Link
-                href="/instructor"
-                className="btn-workshop-secondary text-xs py-3 px-5 inline-flex items-center gap-2"
-              >
-                <Eye className="w-4 h-4" />
-                <span>Explore Instructor Control Room</span>
-                <ArrowRight className="w-4 h-4" />
+              <Link href="/instructor" className="btn-workshop-secondary py-2.5 px-5 inline-flex items-center gap-2">
+                <span>Open Instructor Control Room</span>
+                <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
           </div>
 
-          {/* Right Mock Visual Panel */}
           <div className="lg:col-span-6">
-            <div className="blueprint-card p-6 border-arc-500/30">
-              <div className="flex items-center justify-between border-b border-workshop-border pb-3 mb-4">
-                <div className="flex items-center gap-2">
-                  <div className="w-2.5 h-2.5 rounded-full bg-safety-green animate-pulse" />
-                  <span className="font-mono text-xs text-chalk uppercase tracking-wider">
-                    APPRENTICE DIAGNOSTIC MONITOR
-                  </span>
-                </div>
-                <span className="text-[10px] font-mono text-arc-400">ISA BENCH 04</span>
+            <div className="workshop-card p-6 bg-paper space-y-4">
+              <div className="flex items-center justify-between border-b border-workshop-border pb-3 text-[11px] font-mono">
+                <span className="text-ink-muted uppercase tracking-wider">Assessor Ledger &bull; Cohort A</span>
+                <span className="text-safety-green">LIVE TELEMETRY</span>
               </div>
 
-              <div className="space-y-3 font-mono text-xs">
-                <div className="p-3 bg-workshop-bg/80 border border-workshop-border rounded-workshop">
-                  <div className="flex justify-between text-chalk-faded text-[10px] mb-1">
-                    <span>APPRENTICE: MARCUS V.</span>
-                    <span>10:42:15 AM</span>
+              <div className="space-y-3 text-xs font-mono">
+                <div className="p-3 bg-paper-hi border border-workshop-border rounded-workshop">
+                  <div className="flex justify-between text-[10px] text-ink-faded mb-1">
+                    <span>LEARNER: MARCUS VANCE</span>
+                    <span>BS 7671 MODULE 1</span>
                   </div>
-                  <div className="text-chalk font-heading text-xs">
-                    Completed 12V Series Circuit Assembly
+                  <div className="font-sans font-medium text-ink">
+                    Completed Safe Isolation &amp; 1-Way Lighting Circuit
                   </div>
-                  <div className="mt-2 flex items-center justify-between text-[11px]">
-                    <span className="text-safety-green">0 Short Circuit Attempts</span>
-                    <span className="text-amber-400 font-bold">Score: 100%</span>
-                  </div>
-                </div>
-
-                <div className="p-3 bg-workshop-bg/80 border border-workshop-border rounded-workshop">
-                  <div className="flex justify-between text-chalk-faded text-[10px] mb-1">
-                    <span>APPRENTICE: ELENA R.</span>
-                    <span>10:39:04 AM</span>
-                  </div>
-                  <div className="text-chalk font-heading text-xs">
-                    Hydrostatic Pipe Joint Leak Test
-                  </div>
-                  <div className="mt-2 flex items-center justify-between text-[11px]">
-                    <span className="text-safety-green">Sealed All 3 Fitting Openings</span>
-                    <span className="text-arc-400 font-bold">Score: 95%</span>
+                  <div className="mt-1.5 text-[11px] text-safety-green">
+                    0 Dead Shorts &bull; Polarity Verified &bull; R1+R2: 0.34 Ω
                   </div>
                 </div>
 
-                <div className="p-3 bg-workshop-bg/80 border border-workshop-border rounded-workshop">
-                  <div className="flex justify-between text-chalk-faded text-[10px] mb-1">
-                    <span>AI FOREMAN ALERT</span>
-                    <span className="text-safety-yellow">LOW CONFIDENCE FLAG</span>
+                <div className="p-3 bg-paper-hi border border-workshop-border rounded-workshop">
+                  <div className="flex justify-between text-[10px] text-ink-faded mb-1">
+                    <span>LEARNER: ELENA ROSTOVA</span>
+                    <span>WRAS MODULE 1</span>
                   </div>
-                  <div className="text-safety-yellow text-[11px]">
-                    Question regarding 230V mains isolation deferred to instructor review queue.
+                  <div className="font-sans font-medium text-ink">
+                    Basin Supply &amp; 32mm P-Trap Commissioning
+                  </div>
+                  <div className="mt-1.5 text-[11px] text-trade-plumbing">
+                    3.0 Bar Held (15m) &bull; 0 Weeping Joints &bull; 50mm Trap Seal OK
                   </div>
                 </div>
               </div>

@@ -1,98 +1,94 @@
 "use client";
 
 import Link from "next/link";
-import { Zap, Wrench, Shield, ArrowRight, Gauge, CheckCircle2 } from "lucide-react";
-import { motion } from "framer-motion";
+import { ArrowRight } from "lucide-react";
 
 export default function HeroSection() {
   return (
-    <section className="relative pt-20 pb-16 overflow-hidden bg-workshop-bg border-b border-workshop-border">
-      {/* Background Blueprint Grid */}
-      <div className="absolute inset-0 bg-workshop-grid opacity-40 pointer-events-none" />
-
-      {/* Decorative Blueprint Corner Markings */}
-      <div className="absolute top-6 left-6 text-chalk-faded/20 font-mono text-[10px] select-none hidden lg:block">
-        [SYS_COORD: 51.5074° N, 0.1278° W &bull; ISA LAB SCALE 1:1]
-      </div>
-      <div className="absolute top-6 right-6 text-chalk-faded/20 font-mono text-[10px] select-none hidden lg:block">
-        [SPEC_STD: BS 7671 (18th Ed) &bull; WRAS APPROVED]
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
-        {/* Top Tag */}
-        <div className="flex items-center justify-center mb-6">
-          <div className="work-order-tag bg-amber-500/10 border-amber-500/30 text-amber-400">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-            <span>IMPERIAL SKILLS ACADEMY &bull; AI WORKSHOP TWIN</span>
-          </div>
+    <section className="relative pt-14 pb-16 bg-paper border-b border-workshop-border">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        {/* Kicker */}
+        <div className="flex items-center gap-3 mb-5">
+          <span className="text-[11px] font-mono uppercase tracking-widest text-trade-electrical font-semibold">
+            00 &mdash; IMPERIAL SKILLS ACADEMY
+          </span>
+          <span className="text-[11px] font-mono text-ink-faded">
+            BS 7671 &bull; WRAS LEVEL 1 PRE-BENCH
+          </span>
         </div>
 
-        {/* Main Stencil Headline */}
-        <div className="text-center max-w-4xl mx-auto">
-          <h1 className="font-display uppercase text-5xl sm:text-7xl lg:text-hero leading-tight tracking-wider text-chalk">
-            Make <span className="text-amber-500 underline decoration-amber-500/40 decoration-4 underline-offset-8">20 Mistakes</span> Here
-            <br />
-            Before One Out There.
-          </h1>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+          {/* Left Editorial Pitch */}
+          <div className="lg:col-span-7 space-y-6">
+            <h1 className="font-serif text-4xl sm:text-5xl lg:text-[3.4rem] font-semibold text-ink leading-[1.1] tracking-tight">
+              Practice real electrical &amp; plumbing installations before stepping onto the live bay.
+            </h1>
 
-          <p className="mt-6 text-lg sm:text-xl text-chalk-muted font-body max-w-2xl mx-auto leading-relaxed">
-            The interactive AI training twin built for beginner electricians and plumbers.
-            Safely test wiring loops, identify short circuits, assemble pipe systems, and master technical intuition before touching live equipment.
-          </p>
+            <p className="text-base text-ink-secondary max-w-2xl leading-relaxed">
+              A sober, standards-aligned 3D training bench for adult learners and trade apprentices. Wire a 230V domestic consumer unit, execute safe isolation lock-off, tighten 15mm copper compression fittings, and commission a 3.0 bar hydrostatic test under instructor supervision.
+            </p>
 
-          {/* Action Buttons */}
-          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
-              href="/workshop/electrical"
-              className="btn-workshop w-full sm:w-auto text-sm py-4 px-8 flex items-center justify-center gap-2 group shadow-glow-amber"
-            >
-              <Zap className="w-4 h-4 fill-workshop-bg group-hover:scale-110 transition-transform" />
-              <span>Launch Electrical Lab</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </Link>
+            <div className="flex flex-wrap items-center gap-3 pt-2">
+              <Link
+                href="/workshop/electrical"
+                className="btn-workshop py-3 px-6 text-xs flex items-center gap-2"
+              >
+                <span>Open 3D Electrical Bay</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
 
-            <Link
-              href="/workshop/plumbing"
-              className="btn-arc w-full sm:w-auto text-sm py-4 px-8 flex items-center justify-center gap-2 group shadow-glow-arc"
-            >
-              <Wrench className="w-4 h-4 group-hover:scale-110 transition-transform" />
-              <span>Launch Plumbing Lab</span>
-            </Link>
+              <Link
+                href="/workshop/plumbing"
+                className="btn-arc py-3 px-6 text-xs flex items-center gap-2"
+              >
+                <span>Open 3D Plumbing Rig</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
 
-            <Link
-              href="/instructor"
-              className="btn-workshop-secondary w-full sm:w-auto text-sm py-4 px-6 flex items-center justify-center gap-2"
-            >
-              <Gauge className="w-4 h-4 text-chalk-muted" />
-              <span>Instructor View</span>
-            </Link>
-          </div>
-        </div>
-
-        {/* Technical Gauge Meter Stats Banner */}
-        <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-5xl mx-auto">
-          <div className="workshop-card-riveted p-4">
-            <div className="text-[10px] font-mono text-chalk-faded uppercase tracking-widest">Pre-Bench Errors</div>
-            <div className="mt-1 text-2xl font-mono text-amber-400 font-bold">5,420+</div>
-            <div className="text-[11px] text-chalk-muted mt-1">Virtual faults caught without physical kit damage</div>
+              <Link
+                href="/instructor"
+                className="btn-workshop-secondary py-3 px-5 text-xs"
+              >
+                Instructor Observation Log
+              </Link>
+            </div>
           </div>
 
-          <div className="workshop-card-riveted p-4">
-            <div className="text-[10px] font-mono text-chalk-faded uppercase tracking-widest">Physical Safety Rating</div>
-            <div className="mt-1 text-2xl font-mono text-safety-green font-bold">100%</div>
-            <div className="text-[11px] text-chalk-muted mt-1">Zero live shocks &bull; Supervisor gate isolation</div>
-          </div>
+          {/* Right Specification Table Card */}
+          <div className="lg:col-span-5">
+            <div className="workshop-card p-6 space-y-4">
+              <div className="flex items-center justify-between border-b border-workshop-border pb-3">
+                <span className="font-mono text-[11px] uppercase tracking-wider text-ink-muted">
+                  Training Rig Specification
+                </span>
+                <span className="font-mono text-[11px] text-safety-green font-semibold">
+                  ONLINE
+                </span>
+              </div>
 
-          <div className="workshop-card-riveted p-4">
-            <div className="text-[10px] font-mono text-chalk-faded uppercase tracking-widest">AI Tutor Grounding</div>
-            <div className="mt-1 text-2xl font-mono text-arc-400 font-bold">ISA Verified</div>
-            <div className="text-[11px] text-chalk-muted mt-1">Grounded exclusively in approved course notes</div>
-          </div>
-
-          <div className="workshop-card-riveted p-4">
-            <div className="text-[10px] font-mono text-chalk-faded uppercase tracking-widest">Evaluation Model</div>
-            <div className="mt-1 text-2xl font-mono text-chalk font-bold">Evidence-Only</div>
-            <div className="text-[11px] text-chalk-muted mt-1">No aptitude labels &bull; Concrete behavioral log</div>
+              <dl className="divide-y divide-rule-soft text-xs">
+                <div className="py-2.5 flex justify-between gap-4">
+                  <dt className="font-mono text-ink-faded">ELECTRICAL BAY</dt>
+                  <dd className="text-right font-medium text-ink">230V AC Consumer Unit, MCBs, Wall Switch &amp; Batten</dd>
+                </div>
+                <div className="py-2.5 flex justify-between gap-4">
+                  <dt className="font-mono text-ink-faded">PLUMBING RIG</dt>
+                  <dd className="text-right font-medium text-ink">15mm Copper, Brass Compression, P-Trap &amp; 3.0 Bar Test</dd>
+                </div>
+                <div className="py-2.5 flex justify-between gap-4">
+                  <dt className="font-mono text-ink-faded">SAFETY ENGINE</dt>
+                  <dd className="text-right font-medium text-ink">Deterministic Circuit &amp; Hydraulic Graph Rules</dd>
+                </div>
+                <div className="py-2.5 flex justify-between gap-4">
+                  <dt className="font-mono text-ink-faded">AI TUTOR</dt>
+                  <dd className="text-right font-medium text-ink">Grounded in ISA Instructor Notes Only</dd>
+                </div>
+                <div className="py-2.5 flex justify-between gap-4">
+                  <dt className="font-mono text-ink-faded">ASSESSMENT</dt>
+                  <dd className="text-right font-medium text-ink">Behavioral Evidence Log (No Aptitude Labels)</dd>
+                </div>
+              </dl>
+            </div>
           </div>
         </div>
       </div>

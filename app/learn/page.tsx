@@ -67,17 +67,17 @@ export default function LearnPage() {
                   : "bg-workshop-bg text-chalk-muted border-workshop-border hover:text-amber-400"
               }`}
             >
-              ⚡ Electrical
+              Electrical (BS 7671)
             </button>
             <button
               onClick={() => setFilter("plumbing")}
               className={`px-3 py-1.5 rounded-workshop text-xs font-mono uppercase tracking-wider border transition-colors ${
                 filter === "plumbing"
-                  ? "bg-arc-500/20 text-arc-300 border-arc-500"
-                  : "bg-workshop-bg text-chalk-muted border-workshop-border hover:text-arc-400"
+                  ? "bg-trade-plumbing text-white border-trade-plumbing"
+                  : "bg-paper-hi text-ink-muted border-workshop-border hover:text-ink"
               }`}
             >
-              🔧 Plumbing
+              Plumbing (WRAS)
             </button>
           </div>
         </div>
@@ -102,7 +102,7 @@ export default function LearnPage() {
                           : "bg-arc-500/10 text-arc-400 border-arc-500/30"
                       }`}
                     >
-                      {isElectrical ? "⚡ Electrical" : "🔧 Plumbing"}
+                      {isElectrical ? "Electrical" : "Plumbing"}
                     </span>
                     <span className="text-[10px] font-mono text-chalk-faded flex items-center gap-1">
                       <Clock className="w-3 h-3" /> {lesson.duration}m

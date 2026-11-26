@@ -9,12 +9,34 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        paper: {
+          DEFAULT: "#F2EEE5",
+          hi: "#FAF8F3",
+          lo: "#E6E0D3",
+        },
+        ink: {
+          DEFAULT: "#18181B",
+          secondary: "#3F3F46",
+          muted: "#52525B",
+          faded: "#71717A",
+        },
+        rule: {
+          DEFAULT: "rgba(24, 24, 27, 0.14)",
+          soft: "rgba(24, 24, 27, 0.08)",
+        },
+        trade: {
+          electrical: "#B45309",
+          "electrical-bg": "#FEF3C7",
+          plumbing: "#0F766E",
+          "plumbing-bg": "#CCFBF1",
+        },
+        // Keep legacy token aliases so any shared utilities resolve cleanly
         workshop: {
-          bg: "#09090B",
-          surface: "#111113",
-          elevated: "#1A1A1E",
-          border: "#2A2A2F",
-          "border-light": "#3F3F46",
+          bg: "#F2EEE5",
+          surface: "#FAF8F3",
+          elevated: "#E6E0D3",
+          border: "#D6D0C4",
+          "border-light": "#C2BBB0",
           muted: "#71717A",
         },
         amber: {
@@ -22,132 +44,50 @@ const config: Config = {
           100: "#FEF3C7",
           200: "#FDE68A",
           300: "#FCD34D",
-          400: "#FBBF24",
-          500: "#F59E0B",
-          600: "#D97706",
-          700: "#B45309",
-          800: "#92400E",
-          900: "#78350F",
-          950: "#451A03",
+          400: "#D97706",
+          500: "#B45309",
+          600: "#92400E",
+          700: "#78350F",
+          800: "#451A03",
+          900: "#451A03",
         },
         arc: {
-          50: "#F0F9FF",
-          100: "#E0F2FE",
-          200: "#BAE6FD",
-          300: "#7DD3FC",
-          400: "#38BDF8",
-          500: "#0EA5E9",
-          600: "#0284C7",
-          700: "#0369A1",
-        },
-        copper: {
-          400: "#D4A574",
-          500: "#C4956A",
-          600: "#B07D4F",
+          50: "#F0FDFA",
+          100: "#CCFBF1",
+          200: "#99F6E4",
+          300: "#5EEAD4",
+          400: "#0F766E",
+          500: "#0D9488",
+          600: "#115E59",
+          700: "#134E4A",
         },
         safety: {
-          red: "#EF4444",
-          green: "#4ADE80",
-          yellow: "#FBBF24",
-          orange: "#FB923C",
+          red: "#B91C1C",
+          green: "#15803D",
+          yellow: "#B45309",
+          orange: "#C2410C",
         },
         chalk: {
-          DEFAULT: "#FAFAFA",
-          dim: "#D4D4D8",
-          muted: "#A1A1AA",
+          DEFAULT: "#18181B",
+          dim: "#27272A",
+          muted: "#52525B",
           faded: "#71717A",
         },
       },
       fontFamily: {
-        display: ["var(--font-bebas)", "Impact", "sans-serif"],
-        heading: ["var(--font-space)", "system-ui", "sans-serif"],
-        body: ["var(--font-outfit)", "system-ui", "sans-serif"],
-        mono: ["var(--font-jetbrains)", "monospace"],
-      },
-      fontSize: {
-        "hero": ["5.5rem", { lineHeight: "0.9", letterSpacing: "0.02em" }],
-        "display": ["3.75rem", { lineHeight: "0.95", letterSpacing: "0.02em" }],
-        "title": ["2.25rem", { lineHeight: "1.1", letterSpacing: "0.01em" }],
-      },
-      backgroundImage: {
-        "grid-pattern": `
-          linear-gradient(rgba(250, 250, 250, 0.03) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(250, 250, 250, 0.03) 1px, transparent 1px)
-        `,
-        "grid-dense": `
-          linear-gradient(rgba(250, 250, 250, 0.05) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(250, 250, 250, 0.05) 1px, transparent 1px)
-        `,
-        "hazard-stripe": `repeating-linear-gradient(
-          -45deg,
-          #F59E0B,
-          #F59E0B 10px,
-          #09090B 10px,
-          #09090B 20px
-        )`,
-        "blueprint": `
-          linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(56, 189, 248, 0.05) 1px, transparent 1px)
-        `,
-        "noise": "url('/images/noise.png')",
-        "scan-lines": `repeating-linear-gradient(
-          0deg,
-          transparent,
-          transparent 2px,
-          rgba(0,0,0,0.03) 2px,
-          rgba(0,0,0,0.03) 4px
-        )`,
-      },
-      backgroundSize: {
-        "grid-sm": "20px 20px",
-        "grid-md": "40px 40px",
-        "grid-lg": "80px 80px",
-      },
-      boxShadow: {
-        "workshop": "0 0 0 1px rgba(250, 250, 250, 0.05), 0 4px 24px rgba(0,0,0,0.5)",
-        "glow-amber": "0 0 20px rgba(245, 158, 11, 0.15), 0 0 60px rgba(245, 158, 11, 0.05)",
-        "glow-arc": "0 0 20px rgba(56, 189, 248, 0.15), 0 0 60px rgba(56, 189, 248, 0.05)",
-        "inset-workshop": "inset 0 1px 0 rgba(250, 250, 250, 0.05), inset 0 -1px 0 rgba(0,0,0,0.3)",
+        serif: ["var(--font-serif)", "Georgia", "serif"],
+        display: ["var(--font-serif)", "Georgia", "serif"],
+        heading: ["var(--font-sans)", "system-ui", "sans-serif"],
+        sans: ["var(--font-sans)", "system-ui", "sans-serif"],
+        body: ["var(--font-sans)", "system-ui", "sans-serif"],
+        mono: ["var(--font-mono)", "ui-monospace", "monospace"],
       },
       borderRadius: {
-        "workshop": "2px",
+        workshop: "4px",
       },
-      animation: {
-        "pulse-slow": "pulse 3s ease-in-out infinite",
-        "flicker": "flicker 0.15s ease-in-out infinite alternate",
-        "scan": "scan 8s linear infinite",
-        "spark": "spark 0.6s ease-out forwards",
-        "flow": "flow 2s ease-in-out infinite",
-        "meter-fill": "meterFill 1.5s ease-out forwards",
-        "stamp": "stamp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards",
-      },
-      keyframes: {
-        flicker: {
-          "0%": { opacity: "0.95" },
-          "100%": { opacity: "1" },
-        },
-        scan: {
-          "0%": { transform: "translateY(-100%)" },
-          "100%": { transform: "translateY(100vh)" },
-        },
-        spark: {
-          "0%": { opacity: "1", transform: "scale(0) rotate(0deg)" },
-          "50%": { opacity: "0.8", transform: "scale(1.2) rotate(180deg)" },
-          "100%": { opacity: "0", transform: "scale(0.8) rotate(360deg)" },
-        },
-        flow: {
-          "0%, 100%": { strokeDashoffset: "0" },
-          "50%": { strokeDashoffset: "20" },
-        },
-        meterFill: {
-          "0%": { width: "0%" },
-          "100%": { width: "var(--meter-value)" },
-        },
-        stamp: {
-          "0%": { opacity: "0", transform: "scale(2) rotate(-12deg)" },
-          "60%": { opacity: "1", transform: "scale(0.9) rotate(-6deg)" },
-          "100%": { opacity: "1", transform: "scale(1) rotate(-6deg)" },
-        },
+      boxShadow: {
+        desk: "0 1px 2px rgba(24,24,27,0.05), 0 12px 32px -16px rgba(24,24,27,0.12)",
+        frost: "0 20px 44px -24px rgba(24,24,27,0.28), inset 0 1px 0 rgba(255,255,255,0.7)",
       },
     },
   },

@@ -2,333 +2,108 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ═══════════════════════════════════════════════════
-   AI WORKSHOP TWIN — Industrial Design System
-   "Night Workshop" theme: dark steel, amber safety,
-   arc-blue accents, blueprint grids
-   ═══════════════════════════════════════════════════ */
-
 @layer base {
-  :root {
-    --color-bg: 9 9 11;
-    --color-surface: 17 17 19;
-    --color-amber: 245 158 11;
-    --color-arc: 56 189 248;
-  }
-
-  * {
-    @apply border-workshop-border;
-  }
-
   body {
-    @apply bg-workshop-bg text-chalk font-body antialiased;
+    @apply bg-paper text-ink font-sans antialiased;
     text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
   }
 
   ::selection {
-    @apply bg-amber-500/30 text-amber-100;
+    background-color: rgba(180, 83, 9, 0.16);
+    color: #18181B;
   }
 
-  /* Custom scrollbar — industrial */
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
   }
-
   ::-webkit-scrollbar-track {
-    @apply bg-workshop-bg;
+    background: #E6E0D3;
   }
-
   ::-webkit-scrollbar-thumb {
-    @apply bg-workshop-border-light rounded-none;
-    border: 1px solid rgba(250, 250, 250, 0.05);
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    @apply bg-chalk-faded;
+    background: #B8B0A0;
+    border-radius: 3px;
   }
 }
 
 @layer components {
-  /* ─── Workshop Card ─── */
   .workshop-card {
-    @apply relative bg-workshop-surface border border-workshop-border rounded-workshop overflow-hidden;
-    box-shadow: 
-      0 0 0 1px rgba(250, 250, 250, 0.03),
-      0 4px 24px rgba(0, 0, 0, 0.4);
+    @apply bg-paper-hi border border-workshop-border rounded-workshop shadow-desk;
   }
 
-  .workshop-card::before {
-    content: "";
-    @apply absolute top-0 left-0 right-0 h-px;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(250, 250, 250, 0.08) 20%,
-      rgba(250, 250, 250, 0.08) 80%,
-      transparent
-    );
-  }
-
-  /* ─── Riveted Card (corner bolts effect) ─── */
   .workshop-card-riveted {
-    @apply workshop-card;
+    @apply bg-paper-hi border border-workshop-border rounded-workshop shadow-desk;
   }
 
-  .workshop-card-riveted::after {
-    content: "";
-    @apply absolute inset-0 pointer-events-none;
-    background:
-      radial-gradient(circle at 8px 8px, rgba(250, 250, 250, 0.08) 2px, transparent 2px),
-      radial-gradient(circle at calc(100% - 8px) 8px, rgba(250, 250, 250, 0.08) 2px, transparent 2px),
-      radial-gradient(circle at 8px calc(100% - 8px), rgba(250, 250, 250, 0.08) 2px, transparent 2px),
-      radial-gradient(circle at calc(100% - 8px) calc(100% - 8px), rgba(250, 250, 250, 0.08) 2px, transparent 2px);
-  }
-
-  /* ─── Blueprint Card ─── */
   .blueprint-card {
-    @apply relative bg-workshop-surface border border-arc-700/30 rounded-workshop overflow-hidden;
-    background-image:
-      linear-gradient(rgba(56, 189, 248, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(56, 189, 248, 0.03) 1px, transparent 1px);
-    background-size: 20px 20px;
+    @apply bg-paper-hi border border-workshop-border rounded-workshop shadow-desk;
   }
 
-  /* ─── Stencil Text ─── */
-  .text-stencil {
-    @apply font-display uppercase tracking-wider;
-    text-shadow: 0 0 20px rgba(250, 250, 250, 0.1);
+  .frost-panel {
+    background: rgba(250, 248, 243, 0.88);
+    backdrop-filter: blur(18px) saturate(1.2);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    @apply rounded-workshop shadow-frost;
   }
 
-  /* ─── Workshop Button (Primary) ─── */
   .btn-workshop {
-    @apply relative inline-flex items-center justify-center gap-2
-           px-6 py-3 font-heading font-medium text-sm uppercase tracking-wider
-           bg-amber-500 text-workshop-bg
-           border border-amber-400
-           rounded-workshop
-           transition-all duration-200
-           hover:bg-amber-400 hover:shadow-glow-amber
-           active:translate-y-px
-           disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none;
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5
+           font-sans font-medium text-xs tracking-wide
+           bg-ink text-paper-hi border border-ink rounded-workshop
+           transition-all duration-150 hover:bg-ink-secondary active:translate-y-px
+           disabled:opacity-40 disabled:cursor-not-allowed;
   }
 
-  .btn-workshop::after {
-    content: "";
-    @apply absolute inset-0 rounded-workshop;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  }
-
-  /* ─── Workshop Button (Secondary) ─── */
   .btn-workshop-secondary {
-    @apply relative inline-flex items-center justify-center gap-2
-           px-6 py-3 font-heading font-medium text-sm uppercase tracking-wider
-           bg-transparent text-chalk
-           border border-workshop-border-light
-           rounded-workshop
-           transition-all duration-200
-           hover:bg-workshop-elevated hover:border-chalk-faded
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5
+           font-sans font-medium text-xs tracking-wide
+           bg-paper-hi text-ink border border-workshop-border rounded-workshop
+           transition-all duration-150 hover:bg-paper-lo hover:border-workshop-border-light
            active:translate-y-px;
   }
 
-  /* ─── Workshop Button (Arc / Blue) ─── */
   .btn-arc {
-    @apply relative inline-flex items-center justify-center gap-2
-           px-6 py-3 font-heading font-medium text-sm uppercase tracking-wider
-           bg-arc-600 text-white
-           border border-arc-500
-           rounded-workshop
-           transition-all duration-200
-           hover:bg-arc-500 hover:shadow-glow-arc
-           active:translate-y-px;
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5
+           font-sans font-medium text-xs tracking-wide
+           bg-trade-plumbing text-white border border-trade-plumbing rounded-workshop
+           transition-all duration-150 hover:opacity-90 active:translate-y-px;
   }
 
-  /* ─── Danger Button ─── */
-  .btn-danger {
-    @apply relative inline-flex items-center justify-center gap-2
-           px-6 py-3 font-heading font-medium text-sm uppercase tracking-wider
-           bg-safety-red/20 text-safety-red
-           border border-safety-red/40
-           rounded-workshop
-           transition-all duration-200
-           hover:bg-safety-red/30 hover:border-safety-red/60
-           active:translate-y-px;
-  }
-
-  /* ─── Voltage Meter (Progress Bar) ─── */
-  .meter {
-    @apply relative h-3 bg-workshop-bg border border-workshop-border rounded-workshop overflow-hidden;
-  }
-
-  .meter::before {
-    content: "";
-    @apply absolute inset-0;
-    background: repeating-linear-gradient(
-      90deg,
-      transparent 0px,
-      transparent 8px,
-      rgba(0, 0, 0, 0.3) 8px,
-      rgba(0, 0, 0, 0.3) 9px
-    );
-    z-index: 2;
-  }
-
-  .meter-fill {
-    @apply h-full transition-all duration-700 ease-out;
-    background: linear-gradient(90deg, #92400E, #F59E0B, #FBBF24);
-  }
-
-  .meter-fill-arc {
-    @apply h-full transition-all duration-700 ease-out;
-    background: linear-gradient(90deg, #0369A1, #0EA5E9, #38BDF8);
-  }
-
-  /* ─── Breaker Switch (Toggle) ─── */
-  .breaker-switch {
-    @apply relative w-14 h-8 bg-workshop-bg border-2 border-workshop-border-light
-           rounded-workshop cursor-pointer transition-all duration-200;
-  }
-
-  .breaker-switch[data-state="on"] {
-    @apply border-amber-500 bg-amber-900/30;
-  }
-
-  .breaker-switch-handle {
-    @apply absolute top-0.5 left-0.5 w-6 h-6 bg-chalk-dim
-           border border-workshop-border-light
-           rounded-workshop transition-all duration-200
-           shadow-sm;
-  }
-
-  .breaker-switch[data-state="on"] .breaker-switch-handle {
-    @apply translate-x-6 bg-amber-400 border-amber-300;
-    box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
-  }
-
-  /* ─── Pilot Light (Status Indicator) ─── */
-  .pilot-light {
-    @apply w-3 h-3 rounded-full border-2;
-  }
-
-  .pilot-light-on {
-    @apply bg-safety-green border-safety-green/50;
-    box-shadow: 0 0 8px rgba(74, 222, 128, 0.5);
-  }
-
-  .pilot-light-off {
-    @apply bg-workshop-border border-workshop-border-light;
-  }
-
-  .pilot-light-warning {
-    @apply bg-safety-yellow border-safety-yellow/50;
-    box-shadow: 0 0 8px rgba(251, 191, 36, 0.5);
-  }
-
-  .pilot-light-error {
-    @apply bg-safety-red border-safety-red/50 animate-pulse;
-    box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
-  }
-
-  /* ─── Hazard Stripe Accent ─── */
-  .hazard-stripe {
-    height: 4px;
-    background: repeating-linear-gradient(
-      -45deg,
-      #F59E0B,
-      #F59E0B 4px,
-      #09090B 4px,
-      #09090B 8px
-    );
-  }
-
-  /* ─── Work Order Tag ─── */
   .work-order-tag {
-    @apply inline-flex items-center gap-1.5 px-3 py-1
-           text-xs font-mono uppercase tracking-widest
-           border border-dashed rounded-workshop;
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1
+           text-[11px] font-mono uppercase tracking-wider
+           border border-workshop-border bg-paper-lo text-ink-secondary rounded-workshop;
   }
 
-  /* ─── Stamp Badge ─── */
   .stamp {
-    @apply inline-flex items-center gap-2 px-3 py-1.5
-           font-display text-sm uppercase tracking-wider
-           border-2 rounded-workshop rotate-[-6deg]
-           opacity-80;
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1
+           font-mono text-[11px] font-semibold uppercase tracking-wider
+           border rounded-workshop;
   }
 
   .stamp-approved {
-    @apply text-safety-green border-safety-green;
-  }
-
-  .stamp-pending {
-    @apply text-safety-yellow border-safety-yellow;
+    @apply text-safety-green border-safety-green/40 bg-emerald-50;
   }
 
   .stamp-rejected {
-    @apply text-safety-red border-safety-red;
+    @apply text-safety-red border-safety-red/40 bg-red-50;
   }
 
-  /* ─── Input Field ─── */
+  .stamp-pending {
+    @apply text-amber-600 border-amber-500/40 bg-amber-50;
+  }
+
+  .pilot-light {
+    @apply w-2.5 h-2.5 rounded-full;
+  }
+
+  .pilot-light-on {
+    @apply bg-safety-green;
+  }
+
   .input-workshop {
-    @apply w-full px-4 py-3
-           bg-workshop-bg text-chalk font-body text-sm
-           border border-workshop-border-light rounded-workshop
-           placeholder:text-chalk-faded
-           focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/20
-           transition-all duration-200;
-  }
-
-  /* ─── Section Divider ─── */
-  .section-divider {
-    @apply relative flex items-center gap-4 my-12;
-  }
-
-  .section-divider::before,
-  .section-divider::after {
-    content: "";
-    @apply flex-1 h-px bg-workshop-border;
-  }
-
-  .section-divider-label {
-    @apply text-xs font-mono uppercase tracking-[0.2em] text-chalk-faded whitespace-nowrap;
-  }
-
-  /* ─── Tooltip ─── */
-  .tooltip-workshop {
-    @apply absolute z-50 px-3 py-2
-           bg-workshop-elevated text-chalk text-xs font-mono
+    @apply w-full px-3.5 py-2.5 bg-paper-hi text-ink text-sm
            border border-workshop-border rounded-workshop
-           shadow-workshop pointer-events-none;
-  }
-
-  /* ─── Grid Background ─── */
-  .bg-workshop-grid {
-    background-image:
-      linear-gradient(rgba(250, 250, 250, 0.025) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(250, 250, 250, 0.025) 1px, transparent 1px);
-    background-size: 40px 40px;
-  }
-
-  .bg-blueprint-grid {
-    background-image:
-      linear-gradient(rgba(56, 189, 248, 0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(56, 189, 248, 0.04) 1px, transparent 1px);
-    background-size: 24px 24px;
-  }
-}
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-
-  .gradient-mask-b {
-    mask-image: linear-gradient(to bottom, black 60%, transparent);
-  }
-
-  .gradient-mask-t {
-    mask-image: linear-gradient(to top, black 60%, transparent);
+           placeholder:text-ink-faded focus:outline-none focus:border-ink;
   }
 }

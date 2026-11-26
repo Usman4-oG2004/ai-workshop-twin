@@ -215,9 +215,9 @@ export const ELECTRICAL_SCENARIOS = {
     description: "Build a simple circuit with a battery, switch, and bulb",
     requiredComponents: ["battery", "switch", "bulb", "wire"],
     targetConnections: [
-      { from: "battery", port: "positive", to: "switch", port: "in" },
-      { from: "switch", port: "out", to: "bulb", port: "in" },
-      { from: "bulb", port: "out", to: "battery", port: "negative" },
+      { from: "battery", fromPort: "positive", to: "switch", toPort: "in" },
+      { from: "switch", fromPort: "out", to: "bulb", toPort: "in" },
+      { from: "bulb", fromPort: "out", to: "battery", toPort: "negative" },
     ],
     hints: [
       "Start by placing the battery — it's your power source",
